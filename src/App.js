@@ -22,6 +22,40 @@ function App() {
     return files.find(file => file.id === openID);
   });
 
+  const fileClick = fileID => {
+    // 设置currentID
+    setActiveFileId(fileID);
+    if (!openedFileIDs.includes(fileID)) {
+      setOpenedFileIDs([...openedFileIDs, fileID]);
+    }
+  };
+
+  const tabClick = fileID => {
+    setActiveFileId(fileID);
+  };
+
+  const tabClose = fileID => {
+    const tabWithout = openedFileIDs.filter(itemID => fileID !== itemID);
+    setOpenedFileIDs(tabWithout);
+    // 设置选中的tab
+    if (tabWithout.length > 0) {
+      setActiveFileId(tabWithout[tabWithout.length - 1]);
+    } else {
+      setActiveFileId('');
+    }
+  };
+
+  const fileChange = (id, value) => {
+    const newFiles = files.map(file => {
+      file.body = value;
+      return file;
+    });
+    setFiles(newFiles);
+    if (!unsavedFileIDs.includes(id)) {
+      setUnsavedFileIDs([...unsavedFileIDs, id]);
+    }
+  };
+
   return (
     <div className="container-fluid px-0">
       <div className="row no-gutters">
@@ -30,7 +64,7 @@ function App() {
           <FileList
             files={files}
             onFileDelete={() => {}}
-            onFileClick={() => {}}
+            onFileClick={fileClick}
             onSaveEdit={(id, newTitle) => {
               console.log('-----save--', id, newTitle);
             }}
@@ -52,18 +86,12 @@ function App() {
                 files={openedFiles}
                 activedId={activeFileID}
                 unsaveIds={unsavedFileIDs}
-                onTabClick={id => {
-                  console.log('---id--', id);
-                }}
-                onCloseTab={id => {
-                  console.log('delete----', id);
-                }}
+                onTabClick={tabClick}
+                onCloseTab={tabClose}
               />
               <SimpleMDE
                 value={activeFile && activeFile.body}
-                onChange={val => {
-                  console.log(val);
-                }}
+                onChange={fileChange}
                 options={{
                   minHeight: '515px',
                 }}
