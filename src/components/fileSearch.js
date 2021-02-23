@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
+import PropTypes from 'prop-types';
 
 import './fileSearch.css';
 
@@ -21,8 +22,7 @@ const FileSearch = ({ title, onFileSearch }) => {
     const handleInputEvent = e => {
       const { keyCode } = e;
       if (keyCode === 13 && inputActive) {
-        // onFileSearch(value);
-        console.log('-------value---------', value);
+        onFileSearch(value);
       }
       if (keyCode === 27 && inputActive) {
         closeSearch(e);
@@ -65,6 +65,15 @@ const FileSearch = ({ title, onFileSearch }) => {
       )}
     </div>
   );
+};
+
+FileSearch.propTypes = {
+  title: PropTypes.string,
+  onFileSearch: PropTypes.func.isRequired,
+};
+
+FileSearch.defaultProps = {
+  title: '我的云文档',
 };
 
 export default FileSearch;
