@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
+
+import './fileSearch.css';
 
 const FileSearch = ({ title, onFileSearch }) => {
   const [inputActive, setInputActive] = useState(false);
@@ -15,7 +19,6 @@ const FileSearch = ({ title, onFileSearch }) => {
 
   useEffect(() => {
     const handleInputEvent = e => {
-      console.log('--------keycode---------');
       const { keyCode } = e;
       if (keyCode === 13 && inputActive) {
         // onFileSearch(value);
@@ -32,33 +35,33 @@ const FileSearch = ({ title, onFileSearch }) => {
   });
 
   return (
-    <div className="alert alert-primary">
+    <div className="file-search alert alert-primary d-flex justify-content-between align-items-center">
       {!inputActive ? (
-        <div className="d-flex justify-content-between align-items-center">
-          <span>{title}</span>
+        <>
+          <span className="search-title">{title}</span>
           <button
-            className="btn btn-primary"
+            className="icon-btn"
             onClick={() => {
               setInputActive(true);
             }}
           >
-            搜索
+            <FontAwesomeIcon title="搜索" icon={faSearch} size="lg" />
           </button>
-        </div>
+        </>
       ) : (
-        <div className="row">
+        <>
           <input
-            className="form-control col-8"
+            className="form-control"
             value={value}
             ref={node}
             onChange={e => {
               setValue(e.target.value);
             }}
           />
-          <button className="btn btn-primary col-4" onClick={closeSearch}>
-            关闭
+          <button className="icon-btn" onClick={closeSearch}>
+            <FontAwesomeIcon title="关闭" icon={faTimes} size="lg" />
           </button>
-        </div>
+        </>
       )}
     </div>
   );

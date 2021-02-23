@@ -1,4 +1,9 @@
-.file {
-  display: flex;
-  align-items: center;
+.icon-btn {
+  background: none;
+  border: none;
+  color: inherit;
+}
+
+.search-title {
+  line-height: calc(1.5em + 0.75rem + 2px);
 }
