@@ -12,6 +12,7 @@ import './app.css';
 
 function App() {
   const [files, setFiles] = useState(filesData);
+  const [searchfeFiles, setSearchfeFiles] = useState([]);
   const [activeFileID, setActiveFileId] = useState('');
   const [openedFileIDs, setOpenedFileIDs] = useState([]);
   const [unsavedFileIDs, setUnsavedFileIDs] = useState([]);
@@ -56,18 +57,42 @@ function App() {
     }
   };
 
+  const deleteFile = id => {
+    // 移除文件
+    const newFiles = files.filter(file => file.id !== id);
+    setFiles(newFiles);
+    // 移除打开的tab
+    tabClose(id);
+  };
+
+  const fileSearch = keyWord => {
+    // 筛选
+    const newFiles = files.filter(file => file.title.includes(keyWord));
+    setSearchfeFiles(newFiles);
+  };
+
+  const updateFileName = (id, title) => {
+    const newFiles = files.map(file => {
+      if (file.id === id) {
+        file.title = title;
+      }
+      return file;
+    });
+    setFiles(newFiles);
+  };
+
+  const fileListArr = searchfeFiles.length > 0 ? searchfeFiles : files;
+
   return (
     <div className="container-fluid px-0">
       <div className="row no-gutters">
         <div className="col-4 left-panel">
-          <FileSearch onFileSearch={() => {}} />
+          <FileSearch onFileSearch={fileSearch} />
           <FileList
-            files={files}
-            onFileDelete={() => {}}
+            files={fileListArr}
+            onFileDelete={deleteFile}
             onFileClick={fileClick}
-            onSaveEdit={(id, newTitle) => {
-              console.log('-----save--', id, newTitle);
-            }}
+            onSaveEdit={updateFileName}
           />
           <div className="row no-gutters button-group">
             <div className="col">
@@ -90,6 +115,7 @@ function App() {
                 onCloseTab={tabClose}
               />
               <SimpleMDE
+                key={activeFile && activeFile.id}
                 value={activeFile && activeFile.body}
                 onChange={fileChange}
                 options={{

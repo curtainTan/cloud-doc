@@ -27,7 +27,7 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
     if (escPress && editState) {
       closeEdit();
     }
-  }, [editState]);
+  });
 
   return (
     <ul className="list-group file-list list-group-flush">
@@ -58,7 +58,12 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
               >
                 <FontAwesomeIcon title="编辑" icon={faEdit} />
               </button>
-              <button className="icon-btn col-1" onClick={() => {}}>
+              <button
+                className="icon-btn col-1"
+                onClick={() => {
+                  onFileDelete(item.id);
+                }}
+              >
                 <FontAwesomeIcon title="删除" icon={faTrash} />
               </button>
             </>
