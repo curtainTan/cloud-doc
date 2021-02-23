@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { faPlus, faFileImport } from '@fortawesome/free-solid-svg-icons';
 import SimpleMDE from 'react-simplemde-editor';
+import { v4 as uuidv4 } from 'uuid';
 
 import FileSearch from './components/fileSearch';
 import filesData from './utils/defaultFiles';
@@ -75,6 +76,7 @@ function App() {
     const newFiles = files.map(file => {
       if (file.id === id) {
         file.title = title;
+        file.isNew = false;
       }
       return file;
     });
@@ -82,6 +84,21 @@ function App() {
   };
 
   const fileListArr = searchfeFiles.length > 0 ? searchfeFiles : files;
+
+  const createNewFile = () => {
+    const newID = uuidv4();
+    const newFiles = [
+      ...files,
+      {
+        id: newID,
+        title: '',
+        body: '## 请输入 markdown',
+        createdAt: new Date().getTime(),
+        isNew: true,
+      },
+    ];
+    setFiles(newFiles);
+  };
 
   return (
     <div className="container-fluid px-0">
@@ -96,7 +113,12 @@ function App() {
           />
           <div className="row no-gutters button-group">
             <div className="col">
-              <BottomBtn text="新建" colorClass="btn-primary" icon={faPlus} />
+              <BottomBtn
+                text="新建"
+                onBtnClick={createNewFile}
+                colorClass="btn-primary"
+                icon={faPlus}
+              />
             </div>
             <div className="col">
               <BottomBtn text="导入" colorClass="btn-success" icon={faFileImport} />

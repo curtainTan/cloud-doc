@@ -9,23 +9,37 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
   const [editState, setEditState] = useState(false);
   const [value, setValue] = useState('');
 
+  const node = useRef(null);
+
   const enterPress = useKeyPressed(13);
   const escPress = useKeyPressed(27);
 
-  const closeEdit = () => {
+  const closeEdit = editorItem => {
     setEditState(false);
     setValue('');
+    if (editorItem.isNew) {
+      onFileDelete(editorItem.id);
+    }
   };
 
   useEffect(() => {
-    if (enterPress && editState) {
-      const editItem = files.find(file => file.id === editState);
+    const newFile = files.find(file => file.isNew);
+    if (newFile) {
+      setEditState(newFile.id);
+      setValue(newFile.title);
+      node.current.focus();
+    }
+  }, [files]);
+
+  useEffect(() => {
+    const editItem = files.find(file => file.id === editState);
+    if (enterPress && editState && value.trim() !== '') {
       onSaveEdit(editItem.id, value);
       setEditState(false);
       setValue('');
     }
     if (escPress && editState) {
-      closeEdit();
+      closeEdit(editItem);
     }
   });
 
@@ -36,7 +50,7 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
           className="row list-group-item bg-light d-flex align-items-center file-item mx-0"
           key={item.id}
         >
-          {editState !== item.id && (
+          {(editState !== item.id || !item.isNew) && (
             <>
               <span className="col-1">
                 <FontAwesomeIcon icon={faMarkdown} />
@@ -68,16 +82,23 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
               </button>
             </>
           )}
-          {editState === item.id && (
+          {(editState === item.id || item.isNew) && (
             <>
               <input
                 className="form-control col-10"
                 value={value}
+                placeholder="请输入标题"
+                ref={node}
                 onChange={e => {
                   setValue(e.target.value);
                 }}
               />
-              <button className="icon-btn col-2" onClick={closeEdit}>
+              <button
+                className="icon-btn col-2"
+                onClick={() => {
+                  closeEdit(item);
+                }}
+              >
                 <FontAwesomeIcon title="关闭" icon={faTimes} />
               </button>
             </>
