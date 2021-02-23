@@ -5,6 +5,7 @@ import FileSearch from './components/fileSearch';
 import filesData from './utils/defaultFiles';
 import FileList from './components/fileList';
 import BottomBtn from './components/BottomBtn';
+import TabList from './components/tab/index';
 
 import './components/fileSearch.css';
 
@@ -31,8 +32,18 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="col-8 bg-primary right-panel">
-          <h2>我是右侧</h2>
+        <div className="col-8 right-panel">
+          <TabList
+            files={filesData}
+            activedId="1"
+            unsaveIds={['1']}
+            onTabClick={id => {
+              console.log('---id--', id);
+            }}
+            onCloseTab={id => {
+              console.log('delete----', id);
+            }}
+          />
         </div>
       </div>
     </div>
