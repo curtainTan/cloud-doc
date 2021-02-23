@@ -2006,6 +2006,13 @@
   dependencies:
     "@babel/types" "^7.3.0"
 
+"@types/codemirror@^0.0.88":
+  version "0.0.88"
+  resolved "https://registry.npm.taobao.org/@types/codemirror/download/@types/codemirror-0.0.88.tgz#429e3462ce22865dc40cc1cb27862edaeda0bbab"
+  integrity sha1-Qp40Ys4ihl3EDMHLJ4Yu2u2gu6s=
+  dependencies:
+    "@types/tern" "*"
+
 "@types/color-name@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@types/color-name/-/color-name-1.1.1.tgz#1c1261bbeaa10a8055bbc5d8ab84b7b2afc846a0"
@@ -2102,6 +2109,11 @@
   resolved "https://registry.npm.taobao.org/@types/json5/download/@types/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
+"@types/marked@^0.7.4":
+  version "0.7.4"
+  resolved "https://registry.npm.taobao.org/@types/marked/download/@types/marked-0.7.4.tgz?cache=0&sync_timestamp=1613379272079&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fmarked%2Fdownload%2F%40types%2Fmarked-0.7.4.tgz#607685669bb1bbde2300bc58ba43486cbbee1f0a"
+  integrity sha1-YHaFZpuxu94jALxYukNIbLvuHwo=
+
 "@types/minimatch@*":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
@@ -2158,6 +2170,13 @@
   version "1.0.6"
   resolved "https://registry.npm.taobao.org/@types/tapable/download/@types/tapable-1.0.6.tgz#a9ca4b70a18b270ccb2bc0aaafefd1d486b7ea74"
   integrity sha1-qcpLcKGLJwzLK8Cqr+/R1Ia36nQ=
+
+"@types/tern@*":
+  version "0.23.3"
+  resolved "https://registry.npm.taobao.org/@types/tern/download/@types/tern-0.23.3.tgz?cache=0&sync_timestamp=1613384976260&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Ftern%2Fdownload%2F%40types%2Ftern-0.23.3.tgz#4b54538f04a88c9ff79de1f6f94f575a7f339460"
+  integrity sha1-S1RTjwSojJ/3neH2+U9XWn8zlGA=
+  dependencies:
+    "@types/estree" "*"
 
 "@types/testing-library__jest-dom@^5.9.1":
   version "5.9.5"
@@ -3773,6 +3792,18 @@ code-point-at@^1.0.0:
   resolved "https://registry.npm.taobao.org/code-point-at/download/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
+codemirror-spell-checker@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.npm.taobao.org/codemirror-spell-checker/download/codemirror-spell-checker-1.1.2.tgz#1c660f9089483ccb5113b9ba9ca19c3f4993371e"
+  integrity sha1-HGYPkIlIPMtRE7m6nKGcP0mTNx4=
+  dependencies:
+    typo-js "*"
+
+codemirror@^5.59.2:
+  version "5.59.3"
+  resolved "https://registry.npm.taobao.org/codemirror/download/codemirror-5.59.3.tgz#237ec3ac0e39fee50d6f1a6196c8172a7c7c2ba1"
+  integrity sha1-I37DrA45/uUNbxphlsgXKnx8K6E=
+
 collect-v8-coverage@^1.0.0:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/collect-v8-coverage/download/collect-v8-coverage-1.0.1.tgz#cc2c8e94fc18bbdffe64d6534570c8a673b27f59"
@@ -4773,6 +4804,15 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     inherits "^2.0.1"
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
+
+easymde@^2.10.1:
+  version "2.14.0"
+  resolved "https://registry.npm.taobao.org/easymde/download/easymde-2.14.0.tgz#ba556954ec3a8084fc2984499f58945c81b689ec"
+  integrity sha1-ulVpVOw6gIT8KYRJn1iUXIG2iew=
+  dependencies:
+    codemirror "^5.59.2"
+    codemirror-spell-checker "1.1.2"
+    marked "^2.0.0"
 
 ecc-jsbn@~0.1.1:
   version "0.1.2"
@@ -7929,6 +7969,11 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+marked@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.npm.taobao.org/marked/download/marked-2.0.0.tgz?cache=0&sync_timestamp=1612738489859&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fmarked%2Fdownload%2Fmarked-2.0.0.tgz#9662bbcb77ebbded0662a7be66ff929a8611cee5"
+  integrity sha1-lmK7y3frve0GYqe+Zv+SmoYRzuU=
+
 matcher@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npm.taobao.org/matcher/download/matcher-3.0.0.tgz#bd9060f4c5b70aa8041ccc6f80368760994f30ca"
@@ -10197,6 +10242,15 @@ react-scripts@4.0.2:
   optionalDependencies:
     fsevents "^2.1.3"
 
+react-simplemde-editor@^4.1.3:
+  version "4.1.3"
+  resolved "https://registry.npm.taobao.org/react-simplemde-editor/download/react-simplemde-editor-4.1.3.tgz#e3f5eba988817035c5aa1cae8f1a9d5dfec6081a"
+  integrity sha1-4/XrqYiBcDXFqhyujxqdXf7GCBo=
+  dependencies:
+    "@types/codemirror" "^0.0.88"
+    "@types/marked" "^0.7.4"
+    easymde "^2.10.1"
+
 react@^17.0.1:
   version "17.0.1"
   resolved "https://registry.npm.taobao.org/react/download/react-17.0.1.tgz#6e0600416bd57574e3f86d92edba3d9008726127"
@@ -12063,6 +12117,11 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
+
+typo-js@*:
+  version "1.2.0"
+  resolved "https://registry.npm.taobao.org/typo-js/download/typo-js-1.2.0.tgz#dbe58de3a6dcbbe260b78bf290ee761b008a28e8"
+  integrity sha1-2+WN46bcu+Jgt4vykO52GwCKKOg=
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"

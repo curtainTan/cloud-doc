@@ -1,5 +1,6 @@
 import React from 'react';
 import { faPlus, faFileImport } from '@fortawesome/free-solid-svg-icons';
+import SimpleMDE from 'react-simplemde-editor';
 
 import FileSearch from './components/fileSearch';
 import filesData from './utils/defaultFiles';
@@ -42,6 +43,15 @@ function App() {
             }}
             onCloseTab={id => {
               console.log('delete----', id);
+            }}
+          />
+          <SimpleMDE
+            value={filesData[1].body}
+            onChange={val => {
+              console.log(val);
+            }}
+            options={{
+              minHeight: '515px',
             }}
           />
         </div>
