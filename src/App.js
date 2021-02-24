@@ -62,6 +62,14 @@ function App() {
   const fileClick = fileID => {
     // 设置currentID
     setActiveFileId(fileID);
+    const currentFile = files[fileID];
+    if (!currentFile.isLoaded) {
+      fileHealper.readFile(currentFile.path).then(data => {
+        const newFile = { ...files[fileID], body: data, isLoaded: true };
+        setFiles({ ...files, [fileID]: newFile });
+      });
+    }
+
     if (!openedFileIDs.includes(fileID)) {
       setOpenedFileIDs([...openedFileIDs, fileID]);
     }
@@ -83,22 +91,30 @@ function App() {
   };
 
   const fileChange = (id, value) => {
-    const newFile = { ...files[id], body: value };
-    setFiles({ ...files, [id]: newFile });
-    if (!unsavedFileIDs.includes(id)) {
-      setUnsavedFileIDs([...unsavedFileIDs, id]);
+    if (value !== files[id].body) {
+      const newFile = { ...files[id], body: value };
+      setFiles({ ...files, [id]: newFile });
+      if (!unsavedFileIDs.includes(id)) {
+        setUnsavedFileIDs([...unsavedFileIDs, id]);
+      }
     }
   };
 
   const deleteFile = id => {
     // 移除文件
-    fileHealper.deleteFile(files[id].path).then(() => {
+    if (files[id].isNew) {
       delete files[id];
-      setFiles(files);
-      // 移除打开的tab
-      saveFilesToStore(files);
-      tabClose(id);
-    });
+      setFiles({ ...files });
+    } else {
+      fileHealper.deleteFile(files[id].path).then(() => {
+        // delete files[id];
+        const { [id]: value, ...aferDelete } = files;
+        setFiles(aferDelete);
+        // 移除打开的tab
+        saveFilesToStore(files);
+        tabClose(id);
+      });
+    }
   };
 
   const fileSearch = keyWord => {
@@ -184,6 +200,12 @@ function App() {
                 options={{
                   minHeight: '515px',
                 }}
+              />
+              <BottomBtn
+                text="保存"
+                onBtnClick={saveCurrentFile}
+                colorClass="btn-primary"
+                icon={faPlus}
               />
             </>
           )}

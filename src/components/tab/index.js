@@ -7,6 +7,8 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import './tabList.scss';
 
 const TabList = ({ files, activedId, unsaveIds, onTabClick, onCloseTab }) => {
+  console.log('--unsaveIds-----', unsaveIds, files);
+
   return (
     <ul className="nav nav-pills tabList-component">
       {files.map(file => {
