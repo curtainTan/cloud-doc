@@ -50,7 +50,7 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
           className="row list-group-item bg-light d-flex align-items-center file-item mx-0"
           key={item.id}
         >
-          {(editState !== item.id || !item.isNew) && (
+          {editState !== item.id && !item.isNew && (
             <>
               <span className="col-1">
                 <FontAwesomeIcon icon={faMarkdown} />

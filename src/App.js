@@ -9,20 +9,25 @@ import FileList from './components/fileList';
 import BottomBtn from './components/BottomBtn';
 import TabList from './components/tab/index';
 
+import { flattenArr, objToArr } from './utils/helper';
+
 import './app.css';
 
 function App() {
-  const [files, setFiles] = useState(filesData);
+  const [files, setFiles] = useState(flattenArr(filesData));
   const [searchfeFiles, setSearchfeFiles] = useState([]);
   const [activeFileID, setActiveFileId] = useState('');
   const [openedFileIDs, setOpenedFileIDs] = useState([]);
   const [unsavedFileIDs, setUnsavedFileIDs] = useState([]);
 
-  const activeFile = files.find(file => file.id === activeFileID);
+  const activeFile = files[activeFileID];
+  const filesArr = objToArr(files);
 
   const openedFiles = openedFileIDs.map(openID => {
-    return files.find(file => file.id === openID);
+    return files[openID];
   });
+
+  const fileListArr = searchfeFiles.length > 0 ? searchfeFiles : filesArr;
 
   const fileClick = fileID => {
     // 设置currentID
@@ -48,11 +53,12 @@ function App() {
   };
 
   const fileChange = (id, value) => {
-    const newFiles = files.map(file => {
-      file.body = value;
-      return file;
-    });
-    setFiles(newFiles);
+    // const newFiles = files.map(file => {
+    //   file.body = value;
+    //   return file;
+    // });
+    const newFile = { ...files[id], body: value };
+    setFiles({ ...files, [id]: newFile });
     if (!unsavedFileIDs.includes(id)) {
       setUnsavedFileIDs([...unsavedFileIDs, id]);
     }
@@ -60,43 +66,43 @@ function App() {
 
   const deleteFile = id => {
     // 移除文件
-    const newFiles = files.filter(file => file.id !== id);
-    setFiles(newFiles);
+    // const newFiles = files.filter(file => file.id !== id);
+    delete files[id];
+    setFiles(files);
     // 移除打开的tab
     tabClose(id);
   };
 
   const fileSearch = keyWord => {
     // 筛选
-    const newFiles = files.filter(file => file.title.includes(keyWord));
+    const newFiles = filesArr.filter(file => file.title.includes(keyWord));
     setSearchfeFiles(newFiles);
   };
 
   const updateFileName = (id, title) => {
-    const newFiles = files.map(file => {
-      if (file.id === id) {
-        file.title = title;
-        file.isNew = false;
-      }
-      return file;
-    });
-    setFiles(newFiles);
+    // const newFiles = files.map(file => {
+    //   if (file.id === id) {
+    //     file.title = title;
+    //     file.isNew = false;
+    //   }
+    //   return file;
+    // });
+    const modifiedFile = { ...files[id], title, isNew: false };
+    setFiles({ ...files, [id]: modifiedFile });
   };
-
-  const fileListArr = searchfeFiles.length > 0 ? searchfeFiles : files;
 
   const createNewFile = () => {
     const newID = uuidv4();
-    const newFiles = [
+    const newFiles = {
       ...files,
-      {
+      [newID]: {
         id: newID,
         title: '',
         body: '## 请输入 markdown',
         createdAt: new Date().getTime(),
         isNew: true,
       },
-    ];
+    };
     setFiles(newFiles);
   };
 
@@ -139,7 +145,9 @@ function App() {
               <SimpleMDE
                 key={activeFile && activeFile.id}
                 value={activeFile && activeFile.body}
-                onChange={fileChange}
+                onChange={value => {
+                  fileChange(activeFile.id, value);
+                }}
                 options={{
                   minHeight: '515px',
                 }}
