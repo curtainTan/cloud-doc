@@ -9,12 +9,16 @@ import FileList from './components/fileList';
 import BottomBtn from './components/BottomBtn';
 import TabList from './components/tab/index';
 
-import { flattenArr, objToArr } from './utils/helper';
-
+import { flattenArr, objToArr } from './utils/dataHelper';
+import fileHealper from './utils/fileHelper';
 import './app.css';
 
-const fs = window.require('fs');
-console.dir(fs);
+const { join } = window.require('path');
+const { remote } = window.require('electron');
+const Store = window.require('electron-store');
+
+const store = new Store();
+store.set('name', 'wiki__');
 
 function App() {
   const [files, setFiles] = useState(flattenArr(filesData));
@@ -25,12 +29,21 @@ function App() {
 
   const activeFile = files[activeFileID];
   const filesArr = objToArr(files);
+  const saveLocation = remote && remote.app && remote.app.getPath('documents');
 
   const openedFiles = openedFileIDs.map(openID => {
     return files[openID];
   });
 
   const fileListArr = searchfeFiles.length > 0 ? searchfeFiles : filesArr;
+
+  const saveCurrentFile = () => {
+    fileHealper
+      .writeFile(join(saveLocation, `${activeFile.title}.md`), activeFile.body)
+      .then(() => {
+        setUnsavedFileIDs(unsavedFileIDs.filter(id => id !== activeFile.id));
+      });
+  };
 
   const fileClick = fileID => {
     // 设置currentID
@@ -56,10 +69,6 @@ function App() {
   };
 
   const fileChange = (id, value) => {
-    // const newFiles = files.map(file => {
-    //   file.body = value;
-    //   return file;
-    // });
     const newFile = { ...files[id], body: value };
     setFiles({ ...files, [id]: newFile });
     if (!unsavedFileIDs.includes(id)) {
@@ -69,9 +78,10 @@ function App() {
 
   const deleteFile = id => {
     // 移除文件
-    // const newFiles = files.filter(file => file.id !== id);
-    delete files[id];
-    setFiles(files);
+    fileHealper.deleteFile(join(saveLocation, `${files[id] && files[id].title}.md`)).then(() => {
+      delete files[id];
+      setFiles(files);
+    });
     // 移除打开的tab
     tabClose(id);
   };
@@ -82,16 +92,18 @@ function App() {
     setSearchfeFiles(newFiles);
   };
 
-  const updateFileName = (id, title) => {
-    // const newFiles = files.map(file => {
-    //   if (file.id === id) {
-    //     file.title = title;
-    //     file.isNew = false;
-    //   }
-    //   return file;
-    // });
+  const updateFileName = (id, title, isNew) => {
     const modifiedFile = { ...files[id], title, isNew: false };
-    setFiles({ ...files, [id]: modifiedFile });
+    if (isNew && saveLocation) {
+      fileHealper.writeFile(join(saveLocation, `${title}.md`), files[id].body);
+      setFiles({ ...files, [id]: modifiedFile });
+    } else {
+      fileHealper
+        .renameFile(join(saveLocation, `${files[id].title}.md`), join(saveLocation, `${title}.md`))
+        .then(res => {
+          setFiles({ ...files, [id]: modifiedFile });
+        });
+    }
   };
 
   const createNewFile = () => {
