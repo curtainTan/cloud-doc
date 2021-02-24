@@ -17,11 +17,25 @@ const { join } = window.require('path');
 const { remote } = window.require('electron');
 const Store = window.require('electron-store');
 
-const store = new Store();
-store.set('name', 'wiki__');
+const fileStore = new Store();
+
+const saveFilesToStore = files => {
+  // 不需要将所有的信息存入store
+  const filesStoreObj = objToArr(files).reduce((result, file) => {
+    const { id, path, title, createdAt } = file;
+    result[id] = {
+      id,
+      path,
+      title,
+      createdAt,
+    };
+    return result;
+  }, {});
+  fileStore.set('files', filesStoreObj);
+};
 
 function App() {
-  const [files, setFiles] = useState(flattenArr(filesData));
+  const [files, setFiles] = useState(fileStore.get('files') || {});
   const [searchfeFiles, setSearchfeFiles] = useState([]);
   const [activeFileID, setActiveFileId] = useState('');
   const [openedFileIDs, setOpenedFileIDs] = useState([]);
@@ -78,12 +92,13 @@ function App() {
 
   const deleteFile = id => {
     // 移除文件
-    fileHealper.deleteFile(join(saveLocation, `${files[id] && files[id].title}.md`)).then(() => {
+    fileHealper.deleteFile(files[id].path).then(() => {
       delete files[id];
       setFiles(files);
+      // 移除打开的tab
+      saveFilesToStore(files);
+      tabClose(id);
     });
-    // 移除打开的tab
-    tabClose(id);
   };
 
   const fileSearch = keyWord => {
@@ -93,16 +108,19 @@ function App() {
   };
 
   const updateFileName = (id, title, isNew) => {
-    const modifiedFile = { ...files[id], title, isNew: false };
+    const newPath = join(saveLocation, `${title}.md`);
+    const modifiedFile = { ...files[id], title, isNew: false, path: newPath };
+    const newFiles = { ...files, [id]: modifiedFile };
     if (isNew && saveLocation) {
-      fileHealper.writeFile(join(saveLocation, `${title}.md`), files[id].body);
-      setFiles({ ...files, [id]: modifiedFile });
+      fileHealper.writeFile(newPath, files[id].body);
+      setFiles(newFiles);
+      saveFilesToStore(newFiles);
     } else {
-      fileHealper
-        .renameFile(join(saveLocation, `${files[id].title}.md`), join(saveLocation, `${title}.md`))
-        .then(res => {
-          setFiles({ ...files, [id]: modifiedFile });
-        });
+      const oldPath = join(saveLocation, `${files[id].title}.md`);
+      fileHealper.renameFile(oldPath, newPath).then(res => {
+        setFiles(newFiles);
+        saveFilesToStore(newFiles);
+      });
     }
   };
 
