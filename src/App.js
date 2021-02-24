@@ -4,7 +4,6 @@ import SimpleMDE from 'react-simplemde-editor';
 import { v4 as uuidv4 } from 'uuid';
 
 import FileSearch from './components/fileSearch';
-import filesData from './utils/defaultFiles';
 import FileList from './components/fileList';
 import BottomBtn from './components/BottomBtn';
 import TabList from './components/tab/index';
@@ -13,7 +12,7 @@ import { flattenArr, objToArr } from './utils/dataHelper';
 import fileHealper from './utils/fileHelper';
 import './app.css';
 
-const { join } = window.require('path');
+const { join, basename, extname, dirname } = window.require('path');
 const { remote } = window.require('electron');
 const Store = window.require('electron-store');
 
@@ -51,12 +50,54 @@ function App() {
 
   const fileListArr = searchfeFiles.length > 0 ? searchfeFiles : filesArr;
 
-  const saveCurrentFile = () => {
-    fileHealper
-      .writeFile(join(saveLocation, `${activeFile.title}.md`), activeFile.body)
-      .then(() => {
-        setUnsavedFileIDs(unsavedFileIDs.filter(id => id !== activeFile.id));
+  const importFiles = () => {
+    remote.dialog
+      .showOpenDialog({
+        title: '选择导入的 MarkDown 文件',
+        properties: ['openFile', 'multiSelections'],
+        filters: [
+          {
+            name: 'MarkDown files',
+            extensions: ['md'],
+          },
+        ],
+      })
+      .then(selectData => {
+        if (!selectData.canceled) {
+          // 1. 先获取数组
+          const filteredPath = selectData.filePaths.filter(path => {
+            const alreadyAdded = Object.values(files).find(file => {
+              return file.path === path;
+            });
+            return !alreadyAdded;
+          });
+          // 2. 对数组处理成我们需要的结构：id，title，path
+          const importFilesArr = filteredPath.map(path => {
+            return {
+              id: uuidv4(),
+              title: basename(path, extname(path)),
+              path,
+            };
+          });
+          // 3. 扁平化处理
+          const newFiles = { ...files, ...flattenArr(importFilesArr) };
+          // 5. 设置和更新 store
+          setFiles(newFiles);
+          saveFilesToStore(newFiles);
+          // 弹窗提示成功
+          remote.dialog.showMessageBox({
+            type: 'info',
+            tittle: `成功导入了${selectData.filePaths.length}个文件`,
+            message: `成功导入了${selectData.filePaths.length}个文件`,
+          });
+        }
       });
+  };
+
+  const saveCurrentFile = () => {
+    fileHealper.writeFile(activeFile.path, activeFile.body).then(() => {
+      setUnsavedFileIDs(unsavedFileIDs.filter(id => id !== activeFile.id));
+    });
   };
 
   const fileClick = fileID => {
@@ -124,7 +165,12 @@ function App() {
   };
 
   const updateFileName = (id, title, isNew) => {
-    const newPath = join(saveLocation, `${title}.md`);
+    // 根据是否是新文件进行处理
+    // 如果不是新文件，路径用老的路径 + title
+    // 如果不是新文件，
+    const newPath = isNew
+      ? join(saveLocation, `${title}.md`)
+      : join(dirname(files[id].path), `${title}.md`);
     const modifiedFile = { ...files[id], title, isNew: false, path: newPath };
     const newFiles = { ...files, [id]: modifiedFile };
     if (isNew && saveLocation) {
@@ -132,7 +178,7 @@ function App() {
       setFiles(newFiles);
       saveFilesToStore(newFiles);
     } else {
-      const oldPath = join(saveLocation, `${files[id].title}.md`);
+      const oldPath = files[id].path;
       fileHealper.renameFile(oldPath, newPath).then(res => {
         setFiles(newFiles);
         saveFilesToStore(newFiles);
@@ -176,7 +222,12 @@ function App() {
               />
             </div>
             <div className="col">
-              <BottomBtn text="导入" colorClass="btn-success" icon={faFileImport} />
+              <BottomBtn
+                text="导入"
+                onBtnClick={importFiles}
+                colorClass="btn-success"
+                icon={faFileImport}
+              />
             </div>
           </div>
         </div>
