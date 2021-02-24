@@ -13,6 +13,9 @@ import { flattenArr, objToArr } from './utils/helper';
 
 import './app.css';
 
+const fs = window.require('fs');
+console.dir(fs);
+
 function App() {
   const [files, setFiles] = useState(flattenArr(filesData));
   const [searchfeFiles, setSearchfeFiles] = useState([]);
