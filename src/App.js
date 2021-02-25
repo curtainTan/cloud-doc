@@ -104,10 +104,7 @@ function App() {
   const saveCurrentFile = () => {
     const { path, body, title } = activeFile;
     fileHealper.writeFile(path, body).then(() => {
-      const newUnsaveFiles = unsavedFileIDs.filter(id => id !== activeFile.id);
-      console.log('----newUnsaveFiles----', newUnsaveFiles);
-      setUnsavedFileIDs(newUnsaveFiles);
-      debugger;
+      setUnsavedFileIDs(unsavedFileIDs.filter(id => id !== activeFile.id));
       if (getAutoSync()) {
         ipcRenderer.send('upload-file', { key: `${title}.md`, path });
       }
