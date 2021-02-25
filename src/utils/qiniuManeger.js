@@ -1,4 +1,6 @@
 const qiniu = require('qiniu');
+const axios = require('axios');
+const fs = require('fs');
 
 class QiniuManeger {
   constructor(accessKey, secretKey, bucket) {
@@ -36,6 +38,35 @@ class QiniuManeger {
     return new Promise((resolve, reject) => {
       this.bucketManeger.delete(this.bucket, key, this._handleCallback(resolve, reject));
     });
+  }
+
+  downloadFile(key, downloadPath) {
+    // 1. 获取下载链接
+    // 2. 发送请求，获取文件，返回流
+    // 3. 创建可写流
+    // 4. 返回一个 promise
+    this.generateDownloadLink(key)
+      .then(link => {
+        const timeStamp = new Date().getTime();
+        const url = `${link}?timestamp=${timeStamp}`;
+        return axios({
+          url,
+          method: 'GET',
+          responseType: 'stream',
+          headers: { 'Cache-Control': 'no-cache' },
+        });
+      })
+      .then(response => {
+        const writer = fs.createWriteStream(downloadPath);
+        response.data.pipe(writer);
+        return new Promise((res, rej) => {
+          writer.on('finish', res);
+          writer.on('error', rej);
+        });
+      })
+      .catch(err => {
+        return Promise.reject({ err });
+      });
   }
 
   getBucketDomain() {
