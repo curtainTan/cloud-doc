@@ -18,7 +18,11 @@ const { join, basename, extname, dirname } = window.require('path');
 const { remote, ipcRenderer } = window.require('electron');
 const Store = window.require('electron-store');
 
-const fileStore = new Store();
+const fileStore = new Store({ name: 'fileStore' });
+const settingsStore = new Store({ name: 'Settings' });
+
+const getAutoSync = () =>
+  ['accessKey', 'secretKey', 'bucketName', 'enableAutoSync'].every(key => !!settingsStore.get(key));
 
 const saveFilesToStore = files => {
   // 不需要将所有的信息存入store
@@ -44,7 +48,8 @@ function App() {
 
   const activeFile = files[activeFileID];
   const filesArr = objToArr(files);
-  const saveLocation = remote && remote.app && remote.app.getPath('documents');
+  // const saveLocation = remote && remote.app && remote.app.getPath('documents');
+  const saveLocation = settingsStore.get('savedFileLocation') || remote.app.getPath('documents');
 
   const openedFiles = openedFileIDs.map(openID => {
     return files[openID];
@@ -97,8 +102,15 @@ function App() {
   };
 
   const saveCurrentFile = () => {
-    fileHealper.writeFile(activeFile.path, activeFile.body).then(() => {
-      setUnsavedFileIDs(unsavedFileIDs.filter(id => id !== activeFile.id));
+    const { path, body, title } = activeFile;
+    fileHealper.writeFile(path, body).then(() => {
+      const newUnsaveFiles = unsavedFileIDs.filter(id => id !== activeFile.id);
+      console.log('----newUnsaveFiles----', newUnsaveFiles);
+      setUnsavedFileIDs(newUnsaveFiles);
+      debugger;
+      if (getAutoSync()) {
+        ipcRenderer.send('upload-file', { key: `${title}.md`, path });
+      }
     });
   };
 
@@ -260,12 +272,12 @@ function App() {
                   minHeight: '515px',
                 }}
               />
-              <BottomBtn
+              {/* <BottomBtn
                 text="保存"
                 onBtnClick={saveCurrentFile}
                 colorClass="btn-primary"
                 icon={faPlus}
-              />
+              /> */}
             </>
           )}
         </div>
