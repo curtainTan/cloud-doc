@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { faPlus, faFileImport } from '@fortawesome/free-solid-svg-icons';
 import SimpleMDE from 'react-simplemde-editor';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,12 +8,14 @@ import FileList from './components/fileList';
 import BottomBtn from './components/BottomBtn';
 import TabList from './components/tab/index';
 
+import useIpcRenderer from './hooks/useIpcRenderer';
+
 import { flattenArr, objToArr } from './utils/helper';
 import fileHealper from './utils/fileHelper';
 import './app.css';
 
 const { join, basename, extname, dirname } = window.require('path');
-const { remote } = window.require('electron');
+const { remote, ipcRenderer } = window.require('electron');
 const Store = window.require('electron-store');
 
 const fileStore = new Store();
@@ -185,6 +187,16 @@ function App() {
       });
     }
   };
+
+  useEffect(() => {
+    const callback = () => {
+      console.log('-----hello from back');
+    };
+    ipcRenderer.on('create-new-file', callback);
+    return () => {
+      ipcRenderer.removeListener('create-new-file', callback);
+    };
+  });
 
   const createNewFile = () => {
     const newID = uuidv4();
