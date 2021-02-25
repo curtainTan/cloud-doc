@@ -154,7 +154,7 @@ function App() {
         const { [id]: value, ...aferDelete } = files;
         setFiles(aferDelete);
         // 移除打开的tab
-        saveFilesToStore(files);
+        saveFilesToStore(aferDelete);
         tabClose(id);
       });
     }
@@ -188,16 +188,6 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    const callback = () => {
-      console.log('-----hello from back');
-    };
-    ipcRenderer.on('create-new-file', callback);
-    return () => {
-      ipcRenderer.removeListener('create-new-file', callback);
-    };
-  });
-
   const createNewFile = () => {
     const newID = uuidv4();
     const newFiles = {
@@ -212,6 +202,12 @@ function App() {
     };
     setFiles(newFiles);
   };
+
+  useIpcRenderer({
+    'create-new-file': createNewFile,
+    'import-file': importFiles,
+    'save-edit-file': saveCurrentFile,
+  });
 
   return (
     <div className="container-fluid px-0">

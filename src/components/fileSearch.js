@@ -2,7 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
+
 import useKeyPress from '../hooks/useKeyPress';
+import useIpcRenderer from '../hooks/useIpcRenderer';
 
 const FileSearch = ({ title, onFileSearch }) => {
   const [inputActive, setInputActive] = useState(false);
@@ -26,6 +28,12 @@ const FileSearch = ({ title, onFileSearch }) => {
     if (escPressed && inputActive) {
       closeSearch();
     }
+  });
+
+  useIpcRenderer({
+    'search-file': () => {
+      setInputActive(true);
+    },
   });
 
   return (
