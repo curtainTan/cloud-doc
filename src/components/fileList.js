@@ -5,6 +5,9 @@ import { faMarkdown } from '@fortawesome/free-brands-svg-icons';
 import PropTypes from 'prop-types';
 import useKeyPressed from '../hooks/useKeyPress';
 
+import useContextMenu from '../hooks/useContextMenu';
+import { getParentNode } from '../utils/helper';
+
 const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
   const [editState, setEditState] = useState(false);
   const [value, setValue] = useState('');
@@ -21,6 +24,41 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
       onFileDelete(editorItem.id);
     }
   };
+
+  const clickEle = useContextMenu(
+    [
+      {
+        label: '打开',
+        click: () => {
+          const parentEle = getParentNode(clickEle.current, 'file-item');
+          if (parentEle) {
+            onFileClick(parentEle.dataset.id);
+          }
+        },
+      },
+      {
+        label: '重命名',
+        click: () => {
+          const parentEle = getParentNode(clickEle.current, 'file-item');
+          if (parentEle) {
+            setEditState(parentEle.dataset.id);
+            setValue(parentEle.dataset.title);
+          }
+        },
+      },
+      {
+        label: '删除',
+        click: () => {
+          const parentEle = getParentNode(clickEle.current, 'file-item');
+          if (parentEle) {
+            onFileDelete(parentEle.dataset.id);
+          }
+        },
+      },
+    ],
+    '.file-list',
+    [files]
+  );
 
   useEffect(() => {
     const newFile = files.find(file => file.isNew);
@@ -49,6 +87,8 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
         <li
           className="row list-group-item bg-light d-flex align-items-center file-item mx-0"
           key={item.id}
+          data-id={item.id}
+          data-title={item.title}
         >
           {editState !== item.id && !item.isNew && (
             <>

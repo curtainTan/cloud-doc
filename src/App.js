@@ -8,7 +8,7 @@ import FileList from './components/fileList';
 import BottomBtn from './components/BottomBtn';
 import TabList from './components/tab/index';
 
-import { flattenArr, objToArr } from './utils/dataHelper';
+import { flattenArr, objToArr } from './utils/helper';
 import fileHealper from './utils/fileHelper';
 import './app.css';
 
