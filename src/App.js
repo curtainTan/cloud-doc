@@ -10,7 +10,7 @@ import TabList from './components/tab/index';
 
 import useIpcRenderer from './hooks/useIpcRenderer';
 
-import { flattenArr, objToArr } from './utils/helper';
+import { flattenArr, objToArr, timestampToString } from './utils/helper';
 import fileHealper from './utils/fileHelper';
 import './app.css';
 
@@ -27,12 +27,14 @@ const getAutoSync = () =>
 const saveFilesToStore = files => {
   // 不需要将所有的信息存入store
   const filesStoreObj = objToArr(files).reduce((result, file) => {
-    const { id, path, title, createdAt } = file;
+    const { id, path, title, createdAt, isSynced, upldatedAt } = file;
     result[id] = {
       id,
       path,
       title,
       createdAt,
+      isSynced,
+      upldatedAt,
     };
     return result;
   }, {});
@@ -106,7 +108,6 @@ function App() {
     fileHealper.writeFile(path, body).then(() => {
       setUnsavedFileIDs(unsavedFileIDs.filter(id => id !== activeFile.id));
       if (getAutoSync()) {
-        console.log('------开始上传文件-------');
         ipcRenderer.send('upload-file', { key: `${title}.md`, path });
       }
     });
@@ -213,10 +214,20 @@ function App() {
     setFiles(newFiles);
   };
 
+  const activeFileUploaded = () => {
+    console.log('--------activeFileUploaded-----running-------');
+    const { id } = activeFile;
+    const modifiedFile = { ...files[id], isSynced: true, upldatedAt: new Date().getTime() };
+    const newFiles = { ...files, [id]: modifiedFile };
+    setFiles(newFiles);
+    saveFilesToStore(newFiles);
+  };
+
   useIpcRenderer({
     'create-new-file': createNewFile,
     'import-file': importFiles,
     'save-edit-file': saveCurrentFile,
+    'active-file-uploaded': activeFileUploaded,
   });
 
   return (
@@ -270,6 +281,11 @@ function App() {
                   minHeight: '515px',
                 }}
               />
+              {activeFile.isSynced && (
+                <span className="sync-status">
+                  已同步，上次同步{timestampToString(activeFile.upldatedAt)}
+                </span>
+              )}
               {/* <BottomBtn
                 text="保存"
                 onBtnClick={saveCurrentFile}

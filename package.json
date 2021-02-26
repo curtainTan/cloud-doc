@@ -32,7 +32,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "ele": "electron .",
-    "onlyele": "nodemon --watch main.js --watch src/menuTemplate.js --exec \"electron .\"",
+    "onlyele": "nodemon --watch main.js --watch src/menuTemplate.js --exec yarn dev",
     "dev": "concurrently \"wait-on http://localhost:3000 && electron .\" \"cross-env BROWSER=none yarn start\""
   },
   "eslintConfig": {
@@ -56,6 +56,7 @@
   "devDependencies": {
     "concurrently": "^6.0.0",
     "cross-env": "^7.0.3",
+    "nodemon": "^2.0.7",
     "wait-on": "^5.2.1"
   }
 }

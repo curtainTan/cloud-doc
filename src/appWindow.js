@@ -8,6 +8,7 @@ class Appwindow extends BrowserWindow {
       webPreferences: {
         nodeIntegration: true,
         enableRemoteModule: true,
+        devTools: true,
       },
       show: false,
       backgroundColor: '#efefef',

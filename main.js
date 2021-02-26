@@ -50,7 +50,7 @@ app.on('ready', () => {
     maneger
       .uploadFile(data.key, data.path)
       .then(res => {
-        console.log('upload finish--', res);
+        mainWindow && mainWindow.webContents && mainWindow.webContents.send('active-file-uploaded');
       })
       .catch(() => {
         dialog.showErrorBox('同步失败', '请检查七牛云参数是否正确');
