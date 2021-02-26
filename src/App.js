@@ -106,6 +106,7 @@ function App() {
     fileHealper.writeFile(path, body).then(() => {
       setUnsavedFileIDs(unsavedFileIDs.filter(id => id !== activeFile.id));
       if (getAutoSync()) {
+        console.log('------开始上传文件-------');
         ipcRenderer.send('upload-file', { key: `${title}.md`, path });
       }
     });
