@@ -6,7 +6,7 @@ const path = require('path');
 const menuTemplate = require('./src/menuTemplate');
 const QiniuManeger = require('./src/utils/qiniuManeger');
 
-const fileStore = new Store({ name: 'File Data' });
+const fileStore = new Store({ name: 'fileStore' });
 const settingsStore = new Store({ name: 'Settings' });
 const createManeger = () => {
   const ak = settingsStore.get('accessKey');
@@ -61,13 +61,15 @@ app.on('ready', () => {
     const maneger = createManeger();
     const fileObj = fileStore.get('files');
     const { key, path, id } = data;
-    maneger.getStat(data.key).then(
+    maneger.getStat(key).then(
       res => {
-        console.log('file------store', res);
-        console.log('files-----', fileObj[data.id]);
+        // console.log('file------store', res);
+        // console.log('fileObj-------', fileObj);
+        // console.log('id-------', id, key);
         const serverUpdateTime = Math.round(res.putTime / 10000);
-        console.log('七牛---', serverUpdateTime);
-        const localUpdateTime = fileObj[key].updatedAt;
+        // console.log('fileObj[key]--------', fileObj[id]);
+        const localUpdateTime = fileObj[id].updatedAt;
+        // console.log('七牛---', serverUpdateTime > localUpdateTime);
         if (serverUpdateTime > localUpdateTime || !localUpdateTime) {
           maneger.downloadFile(key, path).then(() => {
             mainWindow.webContents.send('file-downloaded', { status: 'download-success', id });
@@ -83,6 +85,13 @@ app.on('ready', () => {
         }
       }
     );
+  });
+
+  ipcMain.on('upload-all-to-qiniu', () => {
+    mainWindow.webContents.send('loading-status', true);
+    setTimeout(() => {
+      mainWindow.webContents.send('loading-status', false);
+    }, 2000);
   });
 
   let menu = Menu.buildFromTemplate(menuTemplate);

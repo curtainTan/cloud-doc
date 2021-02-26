@@ -105,10 +105,8 @@ class QiniuManeger {
         throw resErr;
       }
       if (respInfo.statusCode === 200) {
-        console.log('-------respBody----200--', respBody);
         resolve(respBody);
       } else {
-        console.log('-------_handleCallback----------', respInfo.statusCode, respInfo);
         reject({
           statusCode: respInfo.statusCode,
           body: respBody,

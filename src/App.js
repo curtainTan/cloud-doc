@@ -7,6 +7,7 @@ import FileSearch from './components/fileSearch';
 import FileList from './components/fileList';
 import BottomBtn from './components/BottomBtn';
 import TabList from './components/tab/index';
+import Loader from './components/loader/loader';
 
 import useIpcRenderer from './hooks/useIpcRenderer';
 
@@ -27,14 +28,14 @@ const getAutoSync = () =>
 const saveFilesToStore = files => {
   // 不需要将所有的信息存入store
   const filesStoreObj = objToArr(files).reduce((result, file) => {
-    const { id, path, title, createdAt, isSynced, upldatedAt } = file;
+    const { id, path, title, createdAt, isSynced, updatedAt } = file;
     result[id] = {
       id,
       path,
       title,
       createdAt,
       isSynced,
-      upldatedAt,
+      updatedAt,
     };
     return result;
   }, {});
@@ -47,6 +48,7 @@ function App() {
   const [activeFileID, setActiveFileId] = useState('');
   const [openedFileIDs, setOpenedFileIDs] = useState([]);
   const [unsavedFileIDs, setUnsavedFileIDs] = useState([]);
+  const [isLoading, setLoading] = useState(false);
 
   const activeFile = files[activeFileID];
   const filesArr = objToArr(files);
@@ -221,7 +223,7 @@ function App() {
 
   const activeFileUploaded = () => {
     const { id } = activeFile;
-    const modifiedFile = { ...files[id], isSynced: true, upldatedAt: new Date().getTime() };
+    const modifiedFile = { ...files[id], isSynced: true, updatedAt: new Date().getTime() };
     const newFiles = { ...files, [id]: modifiedFile };
     setFiles(newFiles);
     saveFilesToStore(newFiles);
@@ -239,7 +241,7 @@ function App() {
           body: value,
           isLoaded: true,
           isSynced: true,
-          upldatedAt: new Date().getTime(),
+          updatedAt: new Date().getTime(),
         };
       } else {
         newFile = { ...files[id], body: value, isLoaded: true };
@@ -250,16 +252,22 @@ function App() {
     });
   };
 
+  const setLoadingFun = (event, status) => {
+    setLoading(status);
+  };
+
   useIpcRenderer({
     'create-new-file': createNewFile,
     'import-file': importFiles,
     'save-edit-file': saveCurrentFile,
     'active-file-uploaded': activeFileUploaded,
     'file-downloaded': activeFileDownloaded,
+    'loading-status': setLoadingFun,
   });
 
   return (
     <div className="container-fluid px-0">
+      {isLoading && <Loader />}
       <div className="row no-gutters">
         <div className="col-4 left-panel">
           <FileSearch onFileSearch={fileSearch} />
@@ -311,15 +319,9 @@ function App() {
               />
               {activeFile.isSynced && (
                 <span className="sync-status">
-                  已同步，上次同步{timestampToString(activeFile.upldatedAt)}
+                  已同步，上次同步{timestampToString(activeFile.updatedAt)}
                 </span>
               )}
-              {/* <BottomBtn
-                text="保存"
-                onBtnClick={saveCurrentFile}
-                colorClass="btn-primary"
-                icon={faPlus}
-              /> */}
             </>
           )}
         </div>
