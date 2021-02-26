@@ -1,4 +1,4 @@
-const { remote } = require('electron');
+const { remote, ipcRenderer } = require('electron');
 const Store = require('electron-store');
 
 const settingsStore = new Store({ name: 'Settings' });
@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     // settingsStore.set('savedFileLocation', savedLocation);
+    // 发送事件到主进程
+    ipcRenderer.send('config-is-saved');
     remote.getCurrentWindow().close();
   });
 

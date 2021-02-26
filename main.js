@@ -4,6 +4,8 @@ const Store = require('electron-store');
 const AppWindow = require('./src/appWindow');
 const path = require('path');
 
+const settingsStore = new Store({ name: 'Settings' });
+
 const menuTemplate = require('./src/menuTemplate');
 
 let mainWindow;
@@ -35,7 +37,25 @@ app.on('ready', () => {
       settingsWindow = null;
     });
   });
-
-  const menu = Menu.buildFromTemplate(menuTemplate);
+  let menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
+
+  // 修改 config 配置
+  ipcMain.on('config-is-saved', () => {
+    let qiniuMenu = process.platform === 'darwin' ? menu.items[3] : menu.items[2];
+
+    const switchItems = toggle => {
+      [1, 2, 3].forEach(item => {
+        qiniuMenu.submenu.items[item].enabled = toggle;
+      });
+    };
+    const qiniuIsConfiged = ['accessKey', 'secretKey', 'bucketName'].every(
+      key => !!settingsStore.get(key)
+    );
+    if (qiniuIsConfiged) {
+      switchItems(true);
+    } else {
+      switchItems(false);
+    }
+  });
 });
