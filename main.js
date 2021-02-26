@@ -24,12 +24,13 @@ app.on('ready', () => {
   // hook up main events
   ipcMain.on('open-settings-window', () => {
     const settingsWindowConfig = {
-      width: 500,
-      height: 400,
+      width: 600,
+      height: 500,
       parent: mainWindow,
     };
     const settingsFileLocation = `file://${path.join(__dirname, './setting/settings.html')}`;
     settingsWindow = new AppWindow(settingsWindowConfig, settingsFileLocation);
+    settingsWindow.removeMenu();
     settingsWindow.on('closed', () => {
       settingsWindow = null;
     });
