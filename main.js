@@ -5,8 +5,8 @@ const AppWindow = require('./src/appWindow');
 const path = require('path');
 const menuTemplate = require('./src/menuTemplate');
 const QiniuManeger = require('./src/utils/qiniuManeger');
-const { createWriteStream } = require('fs');
 
+const fileStore = new Store({ name: 'File Data' });
 const settingsStore = new Store({ name: 'Settings' });
 const createManeger = () => {
   const ak = settingsStore.get('accessKey');
@@ -55,6 +55,34 @@ app.on('ready', () => {
       .catch(() => {
         dialog.showErrorBox('同步失败', '请检查七牛云参数是否正确');
       });
+  });
+
+  ipcMain.on('download-file', (event, data) => {
+    const maneger = createManeger();
+    const fileObj = fileStore.get('files');
+    const { key, path, id } = data;
+    maneger.getStat(data.key).then(
+      res => {
+        console.log('file------store', res);
+        console.log('files-----', fileObj[data.id]);
+        const serverUpdateTime = Math.round(res.putTime / 10000);
+        console.log('七牛---', serverUpdateTime);
+        const localUpdateTime = fileObj[key].updatedAt;
+        if (serverUpdateTime > localUpdateTime || !localUpdateTime) {
+          maneger.downloadFile(key, path).then(() => {
+            mainWindow.webContents.send('file-downloaded', { status: 'download-success', id });
+          });
+        } else {
+          mainWindow.webContents.send('file-downloaded', { status: 'no-new-file', id });
+        }
+      },
+      err => {
+        console.log('------没有文件---', err);
+        if (err.statusCode === 612) {
+          mainWindow.webContents.send('file-downloaded', { status: 'no-file', id });
+        }
+      }
+    );
   });
 
   let menu = Menu.buildFromTemplate(menuTemplate);

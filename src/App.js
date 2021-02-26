@@ -117,11 +117,16 @@ function App() {
     // 设置currentID
     setActiveFileId(fileID);
     const currentFile = files[fileID];
-    if (!currentFile.isLoaded) {
-      fileHealper.readFile(currentFile.path).then(data => {
-        const newFile = { ...files[fileID], body: data, isLoaded: true };
-        setFiles({ ...files, [fileID]: newFile });
-      });
+    const { id, title, path, isLoaded } = currentFile;
+    if (!isLoaded) {
+      if (getAutoSync()) {
+        ipcRenderer.send('download-file', { key: `${title}.md`, path, id });
+      } else {
+        fileHealper.readFile(currentFile.path).then(data => {
+          const newFile = { ...files[fileID], body: data, isLoaded: true };
+          setFiles({ ...files, [fileID]: newFile });
+        });
+      }
     }
 
     if (!openedFileIDs.includes(fileID)) {
@@ -215,7 +220,6 @@ function App() {
   };
 
   const activeFileUploaded = () => {
-    console.log('--------activeFileUploaded-----running-------');
     const { id } = activeFile;
     const modifiedFile = { ...files[id], isSynced: true, upldatedAt: new Date().getTime() };
     const newFiles = { ...files, [id]: modifiedFile };
@@ -223,11 +227,35 @@ function App() {
     saveFilesToStore(newFiles);
   };
 
+  const activeFileDownloaded = (event, message) => {
+    const currentFile = files[message.id];
+    const { id, path } = currentFile;
+
+    fileHealper.readFile(path).then(value => {
+      let newFile;
+      if (message.status === 'download-success') {
+        newFile = {
+          ...files[id],
+          body: value,
+          isLoaded: true,
+          isSynced: true,
+          upldatedAt: new Date().getTime(),
+        };
+      } else {
+        newFile = { ...files[id], body: value, isLoaded: true };
+      }
+      const newFiles = { ...files, [id]: newFile };
+      setFiles(newFiles);
+      saveFilesToStore(newFiles);
+    });
+  };
+
   useIpcRenderer({
     'create-new-file': createNewFile,
     'import-file': importFiles,
     'save-edit-file': saveCurrentFile,
     'active-file-uploaded': activeFileUploaded,
+    'file-downloaded': activeFileDownloaded,
   });
 
   return (
