@@ -256,6 +256,20 @@ function App() {
     setLoading(status);
   };
 
+  const filesUploaded = () => {
+    const newFiles = objToArr(files).reduce((result, file) => {
+      const currentTime = new Date().getTime();
+      result[file.id] = {
+        ...file,
+        isSynced: true,
+        updatedAt: currentTime,
+      };
+      return result;
+    }, {});
+    setFiles(newFiles);
+    saveFilesToStore(newFiles);
+  };
+
   useIpcRenderer({
     'create-new-file': createNewFile,
     'import-file': importFiles,
@@ -263,6 +277,7 @@ function App() {
     'active-file-uploaded': activeFileUploaded,
     'file-downloaded': activeFileDownloaded,
     'loading-status': setLoadingFun,
+    'files-uploaded': filesUploaded,
   });
 
   return (

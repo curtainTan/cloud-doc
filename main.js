@@ -89,9 +89,29 @@ app.on('ready', () => {
 
   ipcMain.on('upload-all-to-qiniu', () => {
     mainWindow.webContents.send('loading-status', true);
-    setTimeout(() => {
-      mainWindow.webContents.send('loading-status', false);
-    }, 2000);
+    const maneger = createManeger();
+    const filesObj = fileStore.get('files') || {};
+    const upLoadPromiseArr = Object.keys(filesObj).map(key => {
+      const file = filesObj[key];
+      return maneger.uploadFile(`${file.title}.md`, file.path);
+    });
+    Promise.all(upLoadPromiseArr)
+      .then(result => {
+        console.log(result);
+        // 上传成功--提示
+        dialog.showMessageBox({
+          type: 'info',
+          title: `成功上传了${result.length}个文件`,
+          message: `成功上传了${result.length}个文件`,
+        });
+        mainWindow.webContents.send('files-uploaded');
+      })
+      .catch(err => {
+        dialog.showErrorBox('同步失败', '请检查七牛云参数是否正确');
+      })
+      .finally(() => {
+        mainWindow.webContents.send('loading-status', false);
+      });
   });
 
   let menu = Menu.buildFromTemplate(menuTemplate);
