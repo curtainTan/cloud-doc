@@ -4,12 +4,14 @@
 /node_modules
 /.pnp
 .pnp.js
+myapp-v0.1.0.tgz
 
 # testing
 /coverage
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store

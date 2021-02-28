@@ -1,30 +1,18 @@
 {
   "name": "myapp",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "main": "main.js",
+  "description": "online cloud doc",
+  "author": {
+    "name": "curtain",
+    "email": "1948750473@qq.com"
+  },
+  "repository": "https://github.com/curtainTan/cloud-doc",
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.34",
-    "@fortawesome/free-brands-svg-icons": "^5.15.2",
-    "@fortawesome/free-solid-svg-icons": "^5.15.2",
-    "@fortawesome/react-fontawesome": "^0.1.14",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "axios": "^0.21.1",
-    "bootstrap": "^4.6.0",
-    "classnames": "^2.2.6",
-    "electron": "^11.3.0",
     "electron-is-dev": "^1.2.0",
     "electron-store": "^7.0.2",
-    "node-sass": "^5.0.0",
-    "qiniu": "^7.3.2",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "react-scripts": "4.0.2",
-    "react-simplemde-editor": "^4.1.3",
-    "uuid": "^8.3.2",
-    "web-vitals": "^1.0.1"
+    "qiniu": "^7.3.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -32,8 +20,47 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "ele": "electron .",
+    "buildMain": "webpack",
     "onlyele": "nodemon --watch main.js --watch src/menuTemplate.js --exec yarn dev",
-    "dev": "concurrently \"wait-on http://localhost:3000 && electron .\" \"cross-env BROWSER=none yarn start\""
+    "dev": "concurrently \"wait-on http://localhost:3000 && electron .\" \"cross-env BROWSER=none yarn start\"",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "win": " electron-builder --win",
+    "prewin": "npm run build && npm run buildMain",
+    "predist": "npm run build && npm run buildMain"
+  },
+  "homepage": "./",
+  "build": {
+    "asar": true,
+    "appId": "my.cloud.doc",
+    "productName": "cloudDoc",
+    "copyright": "Copyright © 2021",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "extends": null,
+    "directories": {
+      "buildResources": "assets"
+    },
+    "extraMetadata": {
+      "main": "./build/main.js"
+    },
+    "publish": [
+      "github"
+    ],
+    "win": {
+      "target": "nsis-web",
+      "icon": "build/icon.ico",
+      "artifactName": "${productName}-Web-Setup-${version}.${ext}",
+      "publisherName": "Kandra Labs, Inc."
+    },
+    "nsis": {
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
+      "perMachine": false
+    }
   },
   "eslintConfig": {
     "extends": [
@@ -54,10 +81,31 @@
     ]
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.34",
+    "@fortawesome/free-brands-svg-icons": "^5.15.2",
+    "@fortawesome/free-solid-svg-icons": "^5.15.2",
+    "@fortawesome/react-fontawesome": "^0.1.14",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "axios": "^0.21.1",
+    "bootstrap": "^4.6.0",
+    "classnames": "^2.2.6",
     "concurrently": "^6.0.0",
+    "copy-webpack-plugin": "6.4.1",
     "cross-env": "^7.0.3",
+    "electron": "^11.3.0",
     "electron-builder": "^22.9.1",
+    "node-sass": "^5.0.0",
     "nodemon": "^2.0.7",
-    "wait-on": "^5.2.1"
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-scripts": "4.0.2",
+    "react-simplemde-editor": "^4.1.3",
+    "uuid": "^8.3.2",
+    "wait-on": "^5.2.1",
+    "web-vitals": "^1.0.1",
+    "webpack": "4.44.2",
+    "webpack-cli": "^4.5.0"
   }
 }
