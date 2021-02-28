@@ -25,7 +25,9 @@
     "dev": "concurrently \"wait-on http://localhost:3000 && electron .\" \"cross-env BROWSER=none yarn start\"",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
+    "release": "electron-builder",
     "win": " electron-builder --win",
+    "prerelease": "npm run build && npm run buildMain",
     "prewin": "npm run build && npm run buildMain",
     "predist": "npm run build && npm run buildMain"
   },
