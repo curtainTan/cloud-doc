@@ -1,6 +1,6 @@
 {
   "name": "myapp",
-  "version": "0.1.2",
+  "version": "1.0.1",
   "private": true,
   "main": "main.js",
   "description": "online cloud doc",
