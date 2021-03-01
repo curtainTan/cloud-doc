@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>about</title>
+  </head>
+  <body>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      .warp {
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        font-size: 22px;
+      }
+      .logo-box {
+        text-align: center;
+      }
+      .logo-box img {
+        border-radius: 38px;
+        height: 160px;
+      }
+      .about {
+        margin-top: 30px;
+      }
+      a {
+        text-decoration: none;
+      }
+    </style>
+    <div class="warp">
+      <div class="logo-box">
+        <img src="./cloud_doc.png" alt="" />
+      </div>
+      <div class="about">
+        <div class="title">应用名：云文档</div>
+        <div class="author">开发者：tan</div>
+        <div class="emil">邮箱：1948750473@qq.com</div>
+        <div>
+          <span class="version">当前版本：1.0.2</span>
+          <a id="check-version" href="#">检查新版本</a>
+        </div>
+      </div>
+    </div>
+    <script>
+      require('./index.js');
+    </script>
+  </body>
+</html>

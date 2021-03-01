@@ -2,10 +2,15 @@ const { app, ipcMain, Menu, dialog } = require('electron');
 const isDev = require('electron-is-dev');
 const Store = require('electron-store');
 const { autoUpdater } = require('electron-updater');
-const AppWindow = require('./src/appWindow');
 const path = require('path');
 const menuTemplate = require('./src/menuTemplate');
 const QiniuManeger = require('./src/utils/qiniuManeger');
+const {
+  createMainWindow,
+  createSettingWindow,
+  createUpdateWindow,
+  createAboutWindow,
+} = require('./src/utils/createWindow');
 
 const fileStore = new Store({ name: 'fileStore' });
 const settingsStore = new Store({ name: 'Settings' });
@@ -16,64 +21,115 @@ const createManeger = () => {
   return new QiniuManeger(ak, sk, bucketName);
 };
 
+const checkVersion = autoUpdater => {
+  if (isDev) {
+    autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml');
+    autoUpdater.checkForUpdates();
+  } else {
+    autoUpdater.checkForUpdatesAndNotify();
+  }
+};
+
 let mainWindow;
 let settingsWindow;
+let updateWindow;
+let aboutWindow;
+let isAutoCheckedUpdate = true;
 
 app.on('ready', () => {
+  Store.initRenderer();
+  mainWindow = createMainWindow();
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+  });
+
   autoUpdater.autoDownload = false;
-  autoUpdater.checkForUpdatesAndNotify();
+  checkVersion(autoUpdater);
+
   autoUpdater.on('error', error => {
     dialog.showErrorBox('Error', error === null ? 'unknow' : error);
   });
 
   autoUpdater.on('update-available', () => {
-    dialog.showMessageBox(
-      {
+    dialog
+      .showMessageBox({
         type: 'info',
         title: '应用有新的版本',
         message: '发现新版本，是否现在更新',
         buttons: ['是', '否'],
-      },
-      buttonIndex => {
-        if (buttonIndex === 0) {
+      })
+      .then(result => {
+        if (result.response === 0) {
           autoUpdater.downloadUpdate();
+          updateWindow = createUpdateWindow(mainWindow);
+          updateWindow.on('closed', () => {
+            updateWindow = null;
+          });
         }
-      }
-    );
-  });
-  autoUpdater.on('update-not-available', () => {
-    dialog.showMessageBox({
-      title: '没有新版本',
-      message: '当前已经是最新版本',
-    });
+      });
   });
 
-  Store.initRenderer();
-  const mainWindowConfig = {
-    width: 1024,
-    height: 680,
-  };
-  const urlLocation = isDev
-    ? 'http://localhost:3000'
-    : `file://${path.join(__dirname, './index.html')}`;
-  mainWindow = new AppWindow(mainWindowConfig, urlLocation);
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  autoUpdater.on('update-not-available', () => {
+    if (isAutoCheckedUpdate) {
+      isAutoCheckedUpdate = false;
+    } else {
+      dialog.showMessageBox({
+        title: '没有新版本',
+        message: '当前已经是最新版本',
+      });
+    }
+  });
+
+  autoUpdater.on('download-progress', progressObj => {
+    if (updateWindow) {
+      updateWindow.webContents.send('download-progress', { progressObj });
+    }
+  });
+
+  autoUpdater.on('update-downloaded', () => {
+    // 模拟一个下载完成事件
+    updateWindow.webContents.send('download-progress', {
+      progressObj: {
+        percent: 100,
+      },
+    });
+    dialog
+      .showMessageBox({
+        title: '安装更新',
+        message: '更新下载完毕，应用将重启并进行安装',
+        buttons: ['是', '否'],
+      })
+      .then(result => {
+        if (result.response === 0) {
+          setImmediate(() => autoUpdater.quitAndInstall());
+        }
+      });
   });
 
   // hook up main events
   ipcMain.on('open-settings-window', () => {
-    const settingsWindowConfig = {
-      width: 600,
-      height: 500,
-      parent: mainWindow,
-    };
-    const settingsFileLocation = `file://${path.join(__dirname, './setting/settings.html')}`;
-    settingsWindow = new AppWindow(settingsWindowConfig, settingsFileLocation);
-    settingsWindow.removeMenu();
+    settingsWindow = createSettingWindow(mainWindow);
     settingsWindow.on('closed', () => {
       settingsWindow = null;
     });
+  });
+
+  // 打开关于页面
+  ipcMain.on('open-about-window', () => {
+    aboutWindow = createAboutWindow(mainWindow);
+    aboutWindow.on('closed', () => {
+      aboutWindow = null;
+    });
+  });
+
+  ipcMain.on('check-version', () => {
+    checkVersion(autoUpdater);
+  });
+
+  ipcMain.on('close-window', (event, data) => {
+    if ((data.window = 'updateWindow')) {
+      updateWindow && updateWindow.close();
+    }
   });
 
   ipcMain.on('upload-file', (event, data) => {
@@ -94,13 +150,8 @@ app.on('ready', () => {
     const { key, path, id } = data;
     maneger.getStat(key).then(
       res => {
-        // console.log('file------store', res);
-        // console.log('fileObj-------', fileObj);
-        // console.log('id-------', id, key);
         const serverUpdateTime = Math.round(res.putTime / 10000);
-        // console.log('fileObj[key]--------', fileObj[id]);
         const localUpdateTime = fileObj[id].updatedAt;
-        // console.log('七牛---', serverUpdateTime > localUpdateTime);
         if (serverUpdateTime > localUpdateTime || !localUpdateTime) {
           maneger.downloadFile(key, path).then(() => {
             mainWindow.webContents.send('file-downloaded', { status: 'download-success', id });

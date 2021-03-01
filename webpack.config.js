@@ -21,6 +21,16 @@ module.exports = {
           to: './setting',
           toType: 'dir',
         },
+        {
+          from: './about',
+          to: './about',
+          toType: 'dir',
+        },
+        {
+          from: './updateDownload',
+          to: './updateDownload',
+          toType: 'dir',
+        },
       ],
     }),
   ],
