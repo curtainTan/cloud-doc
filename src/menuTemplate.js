@@ -165,6 +165,12 @@ let template = [
     role: 'help',
     submenu: [
       {
+        label: `关于云文档`,
+        click: () => {
+          ipcMain.emit('open-about-window');
+        },
+      },
+      {
         label: '学习更多',
         click: () => {
           shell.openExternal('http://electron.atom.io');

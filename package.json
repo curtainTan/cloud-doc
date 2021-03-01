@@ -1,6 +1,6 @@
 {
   "name": "myapp",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "private": true,
   "main": "main.js",
   "description": "online cloud doc",
@@ -54,7 +54,7 @@
     ],
     "win": {
       "target": "nsis-web",
-      "icon": "build/icon.ico",
+      "icon": "build/logo256.ico",
       "artifactName": "${productName}-Web-Setup-${version}.${ext}",
       "publisherName": "Kandra Labs, Inc."
     },
