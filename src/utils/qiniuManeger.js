@@ -34,6 +34,19 @@ class QiniuManeger {
     });
   }
 
+  rename(oldName, newName) {
+    return new Promise((resolve, reject) => {
+      this.bucketManeger.move(
+        this.bucket,
+        oldName,
+        this.bucket,
+        newName,
+        { force: true },
+        this._handleCallback(resolve, reject)
+      );
+    });
+  }
+
   deleteFile(key) {
     return new Promise((resolve, reject) => {
       this.bucketManeger.delete(this.bucket, key, this._handleCallback(resolve, reject));
@@ -104,6 +117,7 @@ class QiniuManeger {
       if (resErr) {
         throw resErr;
       }
+      // console.log('-----返回的数据:', respBody);
       if (respInfo.statusCode === 200) {
         resolve(respBody);
       } else {

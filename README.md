@@ -1,70 +1,38 @@
-# Getting Started with Create React App
+# cloud doc(云笔记)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![](./public/image/cloud_doc.png)
 
-## Available Scripts
+# 项目介绍
 
-In the project directory, you can run:
+基于 electron 框架的云笔记应用.
 
-### `yarn start`
+## 完成功能：
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1. markdown 编辑笔记
+2. 文件保存到本地
+3. 选择保存文件地址
+4. 文件上传到七牛云
+5. 导入本地 md 文件到应用
+6. 自定义菜单
+7. 自动版本更新
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+# 问题记录
 
-### `yarn test`
+1. electrin 如何搭配 react 开发
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+`electron` 使用 `loadURL` 加载页面资源，在本地开发时，使用 `http://localhost:3000` 来载入 react 应用，且可热加载
 
-### `yarn build`
+2. 打包配置
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+可知，electron 应用是由 `main process` 和 `renderen process` 构成，react 打包过后会将打包后的文件放在 `build` 文件夹下，electron-builder 打包默认为打包整个项目，
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+在 package.json 配置打包命令：
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```sh
+"scripts": {
+    ...
+    "win": " electron-builder --win",
+    "prewin": "npm run build",
+    ...
+}
+```

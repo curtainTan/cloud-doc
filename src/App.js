@@ -167,6 +167,10 @@ function App() {
       delete files[id];
       setFiles({ ...files });
     } else {
+      // 移除远端的文件
+      if (getAutoSync()) {
+        ipcRenderer.send('delete-file', { key: `${files[id].title}.md` });
+      }
       fileHealper.deleteFile(files[id].path).then(() => {
         // delete files[id];
         const { [id]: value, ...aferDelete } = files;
@@ -192,12 +196,18 @@ function App() {
       ? join(saveLocation, `${title}.md`)
       : join(dirname(files[id].path), `${title}.md`);
     const modifiedFile = { ...files[id], title, isNew: false, path: newPath };
+    const oldName = `${files[id].title}.md`;
+    const newName = `${title}.md`;
     const newFiles = { ...files, [id]: modifiedFile };
     if (isNew && saveLocation) {
       fileHealper.writeFile(newPath, files[id].body);
       setFiles(newFiles);
       saveFilesToStore(newFiles);
     } else {
+      // 远端重命名
+      if (getAutoSync()) {
+        ipcRenderer.send('file-rename', { oldName, newName });
+      }
       const oldPath = files[id].path;
       fileHealper.renameFile(oldPath, newPath).then(res => {
         setFiles(newFiles);

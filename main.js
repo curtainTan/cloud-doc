@@ -106,6 +106,18 @@ app.on('ready', () => {
       });
   });
 
+  ipcMain.on('delete-file', (event, data) => {
+    const maneger = createManeger();
+    maneger.deleteFile(data.key).then(res => {
+      console.log('-------云端已经删除：', res);
+    });
+  });
+
+  ipcMain.on('file-rename', (event, data = {}) => {
+    const maneger = createManeger();
+    maneger.rename(data.oldName, data.newName);
+  });
+
   // hook up main events
   ipcMain.on('open-settings-window', () => {
     settingsWindow = createSettingWindow(mainWindow);
