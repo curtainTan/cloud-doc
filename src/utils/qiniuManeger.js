@@ -34,6 +34,20 @@ class QiniuManeger {
     });
   }
 
+  getListInfo() {
+    const options = {
+      // 资源文件前缀
+      // prefix: '',
+      // 目录分割符号
+      // delimiter,
+      marker: 0,
+      limit: 20,
+    };
+    return new Promise((resolve, reject) => {
+      this.bucketManeger.listPrefix(this.bucket, options, this._handleCallback(resolve, reject));
+    });
+  }
+
   rename(oldName, newName) {
     return new Promise((resolve, reject) => {
       this.bucketManeger.move(

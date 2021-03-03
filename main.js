@@ -5,6 +5,8 @@ const { autoUpdater } = require('electron-updater');
 const path = require('path');
 const menuTemplate = require('./src/menuTemplate');
 const QiniuManeger = require('./src/utils/qiniuManeger');
+const { v4 } = require('uuid');
+const { join } = path;
 const {
   createMainWindow,
   createSettingWindow,
@@ -179,6 +181,63 @@ app.on('ready', () => {
         }
       }
     );
+  });
+
+  ipcMain.on('download-all-to-local', () => {
+    mainWindow.webContents.send('loading-status', true);
+    const maneger = createManeger();
+    const fileObj = fileStore.get('files');
+    const mergeFileObj = { ...fileObj };
+    Object.keys(fileObj).forEach(key => {
+      const title = fileObj[key].title;
+      fileObj[title] = fileObj[key];
+    });
+    const downloadArr = [];
+    maneger.getListInfo().then(res => {
+      const cloudFiles = res.items;
+      cloudFiles.forEach((file = {}) => {
+        const reg = /\.md$/;
+        if (reg.test(file.key)) {
+          const title = file.key.split(reg)[0];
+          const serverUpdateTime = Math.round(file.putTime / 10000);
+
+          // 本地没有文件信息
+          if (!fileObj[title]) {
+            const id = v4();
+            const saveLocation = settingsStore.get('savedFileLocation') || app.getPath('documents');
+            const savePath = join(saveLocation, file.key);
+            mergeFileObj[id] = {
+              id,
+              title,
+              path: savePath,
+              createdAt: Date.now(),
+              isSynced: true,
+              updatedAt: serverUpdateTime,
+            };
+            fileObj[title] = mergeFileObj[id];
+          }
+
+          const { updatedAt, path } = fileObj[title];
+          if (serverUpdateTime >= updatedAt || !updatedAt) {
+            downloadArr.push(maneger.downloadFile(file.key, path));
+          }
+        }
+      });
+      Promise.all(downloadArr)
+        .then(res => {
+          // 将 mergeFileObj 写入本地
+          fileStore.set('files', mergeFileObj);
+          mainWindow.webContents.send('refresh-files');
+          dialog.showMessageBox({
+            type: 'info',
+            title: `成功同步到本地了${res.length}个文件`,
+            message: `成功同步到本地了${res.length}个文件`,
+          });
+        })
+        .finally(() => {
+          mainWindow.webContents.send('loading-status', false);
+        });
+    });
   });
 
   ipcMain.on('upload-all-to-qiniu', () => {

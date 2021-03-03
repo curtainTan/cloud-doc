@@ -280,6 +280,11 @@ function App() {
     saveFilesToStore(newFiles);
   };
 
+  const refreshFiles = () => {
+    const storeFiles = fileStore.get('files');
+    setFiles(storeFiles);
+  };
+
   useIpcRenderer({
     'create-new-file': createNewFile,
     'import-file': importFiles,
@@ -288,6 +293,7 @@ function App() {
     'file-downloaded': activeFileDownloaded,
     'loading-status': setLoadingFun,
     'files-uploaded': filesUploaded,
+    'refresh-files': refreshFiles,
   });
 
   return (
