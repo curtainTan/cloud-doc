@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 const BottomBtn = ({ text, colorClass, icon, onBtnClick }) => {
   return (
     <button type="button" className={`btn btn-block no-border ${colorClass}`} onClick={onBtnClick}>
-      <FontAwesomeIcon icon={icon} className="mr-2" />
+      {icon && <FontAwesomeIcon icon={icon} className="mr-2" />}
       {text}
     </button>
   );
@@ -14,7 +14,7 @@ const BottomBtn = ({ text, colorClass, icon, onBtnClick }) => {
 BottomBtn.propTypes = {
   text: PropTypes.string,
   colorClass: PropTypes.string,
-  icon: PropTypes.object.isRequired,
+  icon: PropTypes.object,
   onBtnClick: PropTypes.func,
 };
 

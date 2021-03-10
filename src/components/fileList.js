@@ -92,11 +92,11 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
         >
           {editState !== item.id && !item.isNew && (
             <>
-              <span className="col-1">
+              <span>
                 <FontAwesomeIcon icon={faMarkdown} />
               </span>
               <span
-                className="col-8 c-link"
+                className="col-10 c-link"
                 onClick={() => {
                   onFileClick(item.id);
                 }}

@@ -1,0 +1,8 @@
+.nav-link {
+  display: flex !important;
+  justify-content: center;
+}
+
+.selected {
+  color: rgb(21, 82, 153);
+}

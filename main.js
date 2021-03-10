@@ -12,6 +12,7 @@ const {
   createSettingWindow,
   createUpdateWindow,
   createAboutWindow,
+  createLoginWindow,
 } = require('./src/utils/createWindow');
 
 const fileStore = new Store({ name: 'fileStore' });
@@ -36,6 +37,7 @@ let mainWindow;
 let settingsWindow;
 let updateWindow;
 let aboutWindow;
+let loginWindow;
 let isAutoCheckedUpdate = true;
 
 app.on('ready', () => {
@@ -128,6 +130,13 @@ app.on('ready', () => {
     });
   });
 
+  ipcMain.on('open-login-window', () => {
+    loginWindow = createLoginWindow(mainWindow);
+    loginWindow.on('closed', () => {
+      loginWindow = null;
+    });
+  });
+
   // 打开关于页面
   ipcMain.on('open-about-window', () => {
     aboutWindow = createAboutWindow(mainWindow);
@@ -140,10 +149,20 @@ app.on('ready', () => {
     checkVersion(autoUpdater);
   });
 
+  // 关闭窗口
   ipcMain.on('close-window', (event, data) => {
     if ((data.window = 'updateWindow')) {
       updateWindow && updateWindow.close();
     }
+    if ((data.window = 'loginWindow')) {
+      // 发送登录成功的事件到页面
+      loginWindow && loginWindow.close();
+    }
+  });
+
+  // 登录成功
+  ipcMain.on('login-success', () => {
+    mainWindow.webContents.send('login-success');
   });
 
   ipcMain.on('upload-file', (event, data) => {

@@ -2,6 +2,12 @@ const AppWindow = require('../appWindow');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
+const url = 'https://graph.qq.com/oauth2.0/authorize';
+const response_type = 'code';
+const client_id = '101871889';
+const redirect_uri = 'https://service-1oegpnho-1257620930.gz.apigw.tencentcs.com/login';
+const state = 'my-state-only';
+
 const createUpdateWindow = mainWindow => {
   const updateConfig = {
     width: 600,
@@ -60,9 +66,22 @@ const createSettingWindow = mainWindow => {
   return settingsWindow;
 };
 
+const createLoginWindow = mainWindow => {
+  const loginWindowConfig = {
+    width: 600,
+    height: 400,
+    parent: mainWindow,
+  };
+  const loginURL = `${url}?response_type=${response_type}&client_id=${client_id}&redirect_uri=${redirect_uri}&state=${state}`;
+  const loginWindow = new AppWindow(loginWindowConfig, loginURL);
+  loginWindow.removeMenu();
+  return loginWindow;
+};
+
 module.exports = {
   createMainWindow,
   createSettingWindow,
   createUpdateWindow,
   createAboutWindow,
+  createLoginWindow,
 };

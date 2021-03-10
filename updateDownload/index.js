@@ -36,7 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
       $('.btn').innerText = '请稍等...';
     } else {
       // 关闭窗口，取消下载
-      ipcRenderer.send('close-window', { window: 'updateWindow' });
+      // ipcRenderer.send('close-window', { window: 'updateWindow' });
+      remote.getCurrentWindow().close();
     }
   });
 });
