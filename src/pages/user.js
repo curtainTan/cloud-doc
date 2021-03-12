@@ -41,14 +41,14 @@ const UserPage = () => {
       {userInfo && (
         <div className="user-warp">
           <div className="user-warp__header">
-            <img className="avatar" src={userInfo.figureurl_2} />
+            <img className="avatar" src={userInfo.qqinfo.figureurl_2} />
           </div>
           <div className="user-warp__about">
             <div className="user-name">
-              <h3>昵称：{userInfo.nickname}</h3>
+              <h3>昵称：{userInfo.qqinfo.nickname}</h3>
             </div>
             <div className="user-city">
-              <h3>城市：{userInfo.city}</h3>
+              <h3>城市：{userInfo.qqinfo.city}</h3>
             </div>
             <div className="user-quit">
               <BottomBtn text="退出" onBtnClick={logout} colorClass="btn-primary" />
