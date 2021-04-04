@@ -5,7 +5,7 @@ const isDev = require('electron-is-dev');
 const url = 'https://graph.qq.com/oauth2.0/authorize';
 const response_type = 'code';
 const client_id = '101871889';
-const redirect_uri = 'https://service-i8zmxw5g-1257620930.gz.apigw.tencentcs.com/login';
+const redirect_uri = 'https://service-424y8wcu-1257620930.gz.apigw.tencentcs.com/login';
 const state = 'my-state-only';
 
 const createUpdateWindow = mainWindow => {

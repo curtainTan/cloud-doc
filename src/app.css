@@ -1,3 +1,8 @@
+#root {
+  height: 100vh;
+  overflow: hidden;
+}
+
 .icon-btn {
   background: none;
   border: none;
