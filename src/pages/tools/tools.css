@@ -1,10 +1,11 @@
 .uploadImagePage-back {
     position: absolute;
     bottom: 60px;
-    right: 80px;
+    right: 60px;
 }
 
-.uploadImagePage {
+.uploadImagePage,
+.imageToTextPage {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -59,6 +60,16 @@
     background-position: center center;
 }
 
+.imgToText-box {
+    border-radius: 12px;
+    width: 300px;
+    height: 300px;
+    margin: 10px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
 .upload-clipboard {
     max-height: 200px;
     overflow-y: auto;
@@ -66,12 +77,44 @@
     box-shadow: 0px 0px 5px rgb(221, 221, 221);
 }
 
-.srcItem {
+.text-list {
+    max-height: 370px;
+    overflow-y: auto;
+}
+
+.srcItem,
+.textItem {
     display: flex!important;
     align-items: center;
     justify-content: space-between;
 }
 
-.upload-clipboard .row {
+.upload-clipboard .row,
+.text-list .row {
     margin-left: 0;
+}
+
+.img-to-text__left {
+    margin-top: 15px;
+    min-height: 400px;
+    text-align: center;
+    border-right: 1px solid #dfdfdf;
+}
+
+.img-to-text__right-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: #45447a;
+}
+
+.imgToText__no-result {
+    text-align: center;
+    padding: 40px 0px;
+    color: #999;
+}
+
+.copy-all {
+    padding: 10px;
+    text-align: center;
 }

@@ -10,6 +10,7 @@
   },
   "repository": "https://github.com/curtainTan/cloud-doc",
   "dependencies": {
+    "baidu-aip-sdk": "^4.15.4",
     "electron-is-dev": "^1.2.0",
     "electron-store": "^7.0.2",
     "qiniu": "^7.3.2"

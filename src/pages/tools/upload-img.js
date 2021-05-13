@@ -53,7 +53,7 @@ const UploadImgPage = () => {
             <div className="uploadImagePage-back" >
                 <BackBtn />
             </div>
-            <div className="center-box col-8 .col-md-12 .col-sm-12 .col-lg-8" >
+            <div className="center-box col-8 col-md-11 col-sm-11 col-lg-8" >
                 <div className="upload-title" >图片上传</div>
                 <div className="upload-top" >
                     <label htmlFor="upload-input" className="upload-label" >

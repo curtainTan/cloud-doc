@@ -6,6 +6,8 @@ const path = require('path');
 const menuTemplate = require('./src/menuTemplate');
 const QiniuManeger = require('./src/utils/qiniuManeger');
 const { v4 } = require('uuid');
+const BaiduOcr = require('baidu-aip-sdk').ocr
+
 const { join } = path;
 const {
   createMainWindow,
@@ -31,6 +33,14 @@ const createImgManeger = () => {
   const sk = config.imgBucket.secretKey
   const bucketName = config.imgBucket.bucket
   return new QiniuManeger( ak, sk, bucketName )
+}
+
+const createBaiduAi = () => {
+  const appId = config.baiduOcr.appId
+  const ak = config.baiduOcr.apiKey
+  const sk = config.baiduOcr.secretKey
+  const baiduOcr = new BaiduOcr( appId, ak, sk )
+  return baiduOcr
 }
 
 const checkVersion = autoUpdater => {
@@ -178,7 +188,14 @@ app.on('ready', () => {
     const ImgManeger = createImgManeger()
     ImgManeger.uploadFile( data.name, data.path ).then( res => {
       mainWindow && mainWindow.webContents && mainWindow.webContents.send('uploaded-file', res);
-    } )
+    })
+  })
+
+  ipcMain.on( 'image-to-text', ( event, data ) => {
+    const baiduOrc = createBaiduAi()
+    baiduOrc.accurateBasic( data.result ).then( res => {
+      mainWindow && mainWindow.webContents && mainWindow.webContents.send('image-to-texted', res);
+    })
   })
 
   ipcMain.on('upload-file', (event, data) => {

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, Switch, Route } from 'react-router-dom'
 
 import UploadImgPage from './upload-img'
+import ImgToTextPage from './img-to-text'
 import ToolList from './tool-list'
 import './tools.css'
 
@@ -16,6 +17,9 @@ const ToolsPage = () => {
                 </Route>
                 <Route path="/tools/upload-img">
                     <UploadImgPage />
+                </Route>
+                <Route path="/tools/img-to-text">
+                    <ImgToTextPage />
                 </Route>
             </Switch>
         </div>
