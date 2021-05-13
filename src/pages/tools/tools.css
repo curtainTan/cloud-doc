@@ -1,0 +1,77 @@
+.uploadImagePage-back {
+    position: absolute;
+    bottom: 60px;
+    right: 80px;
+}
+
+.uploadImagePage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.center-box {
+    position: relative;
+    border-radius: 12px;
+    /* height: 80%; */
+    min-height: 500px;
+    max-height: 700px;
+    padding-bottom: 20px;
+    box-shadow: 0px 0px 8px 1px rgb(233, 233, 233);
+}
+
+.upload-title {
+    text-align: center;
+    color: rgba(21, 21, 71, 0.856);
+    margin-top: 20px;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.upload-top {
+    text-align: center;
+    padding: 20px 0px;
+}
+
+#upload-input {
+    display: none;
+}
+
+.upload-label {
+    overflow: hidden;
+    max-width: 100%;
+    border-radius: 16px;
+    box-shadow: 0px 0px 10px 1px rgb(235, 235, 235);
+}
+
+.icon-plus {
+    padding: 40px 60px;
+}
+
+.uploadimg-box {
+    border-radius: 12px;
+    width: 400px;
+    height: 300px;
+    margin: 10px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.upload-clipboard {
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: 4px;
+    box-shadow: 0px 0px 5px rgb(221, 221, 221);
+}
+
+.srcItem {
+    display: flex!important;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.upload-clipboard .row {
+    margin-left: 0;
+}

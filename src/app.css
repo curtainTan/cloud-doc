@@ -38,7 +38,7 @@
 }
 
 .CodeMirror-scroll {
-  height: 600px !important;
+  height: calc( 100vh - 150px )!important;
 }
 
 .sync-status {
@@ -81,4 +81,29 @@
 
 .user-quit {
   margin-top: 30px;
+}
+
+.CodeMirror .cm-spell-error:not(.cm-url):not(.cm-comment):not(.cm-tag):not(.cm-word) {
+  background: none!important;
+}
+
+.no-finish {
+  font-size: 30px;
+  font-weight: 600;
+  width: 100%;
+  text-align: center;
+  line-height: 400px;
+  color: #959694;
+}
+
+.tools-page {
+  display: flex;
+}
+
+.tools-item {
+  text-align: center;
+  padding: 10px 30px;
+  border-radius: 4px;
+  box-shadow: 0px 0px 8px 1px rgb(223, 223, 223);
+  margin: 10px;
 }

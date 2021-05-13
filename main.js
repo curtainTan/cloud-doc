@@ -15,6 +15,8 @@ const {
   createLoginWindow,
 } = require('./src/utils/createWindow');
 
+const config = require('./config')
+
 const fileStore = new Store({ name: 'fileStore' });
 const settingsStore = new Store({ name: 'Settings' });
 const createManeger = () => {
@@ -23,6 +25,13 @@ const createManeger = () => {
   const bucketName = settingsStore.get('bucketName');
   return new QiniuManeger(ak, sk, bucketName);
 };
+
+const createImgManeger = () => {
+  const ak = config.imgBucket.accessKey
+  const sk = config.imgBucket.secretKey
+  const bucketName = config.imgBucket.bucket
+  return new QiniuManeger( ak, sk, bucketName )
+}
 
 const checkVersion = autoUpdater => {
   if (isDev) {
@@ -164,6 +173,13 @@ app.on('ready', () => {
   ipcMain.on('login-success', () => {
     mainWindow.webContents.send('login-success');
   });
+
+  ipcMain.on( 'upload-img', ( event, data ) => {
+    const ImgManeger = createImgManeger()
+    ImgManeger.uploadFile( data.name, data.path ).then( res => {
+      mainWindow && mainWindow.webContents && mainWindow.webContents.send('uploaded-file', res);
+    } )
+  })
 
   ipcMain.on('upload-file', (event, data) => {
     const maneger = createManeger();

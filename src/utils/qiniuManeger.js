@@ -13,9 +13,10 @@ class QiniuManeger {
     this.bucketManeger = new qiniu.rs.BucketManager(this.mac, this.config);
   }
 
-  uploadFile(key, localfilePath) {
+  uploadFile(key, localfilePath, addOptions = {}) {
     const options = {
       scope: this.bucket + ':' + key,
+      ...addOptions
     };
     const putPolicy = new qiniu.rs.PutPolicy(options);
     const uploadToken = putPolicy.uploadToken(this.mac);
