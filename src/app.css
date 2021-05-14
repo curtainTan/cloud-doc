@@ -99,11 +99,3 @@
 .tools-page {
   display: flex;
 }
-
-.tools-item {
-  text-align: center;
-  padding: 10px 30px;
-  border-radius: 4px;
-  box-shadow: 0px 0px 8px 1px rgb(223, 223, 223);
-  margin: 10px;
-}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { faCloudUploadAlt, faFont } from '@fortawesome/free-solid-svg-icons'
+import { faCloudUploadAlt, faFont, faSmile, faStar, faImages } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom'
 
@@ -17,7 +17,25 @@ const ToolList = () => {
             icon: faFont,
             color: "rgb(144, 230, 123)",
             to: '/tools/img-to-text',
-        }
+        },
+        {
+            name: "心愿集",
+            icon: faStar,
+            color: "#8e44ad",
+            to: '/tools/star-collection',
+        },
+        {
+            name: "心情说说",
+            icon: faSmile,
+            color: "#e67e22",
+            to: '/tools/mood-diary',
+        },
+        {
+            name: "看图说话",
+            icon: faImages,
+            color: "#e74c3c",
+            to: '/tools/mood-diary',
+        },
     ]
     return (
         <div className="tools-page">
